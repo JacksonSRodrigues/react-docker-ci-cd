@@ -1,0 +1,19 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev    # equivalent to -f Dockerfile.dev in docker build
+    ports:
+      - "3000:3000"                 # equivalent to -p 3000:3000 in docker run
+    volumes:
+      - /app/node_modules           # equivalent to -v /app/node_modules in docker run
+      - .:/app                      # equivalent to -v "$(pwd)":/app in docker run
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev  
+    volumes:
+      - /app/node_modules         
+      - .:/app                    
+    command: ["npm", "run", "test"] # override default command
