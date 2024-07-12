@@ -81,13 +81,13 @@ jobs:
         run: zip -r deploy.zip Dockerrun.aws.json
 
       - name: Deploy to Elastic Beanstalk
-        run: |
-          EB_APP_NAME=react-docker-ci-cd
-          EB_ENV_NAME=React-docker-ci-cd-env
-          VERSION_LABEL=deploy-$(date +%Y%m%d%H%M%S)
-
-          # Create a new application version
-          aws elasticbeanstalk create-application-version --application-name $EB_APP_NAME --version-label $VERSION_LABEL --source-bundle S3Bucket=$EB_APP_NAME, S3Key=deploy.zip
-
-          # Update the environment to use the new application version
-          aws elasticbeanstalk update-environment --environment-name $EB_ENV_NAME --version-label $VERSION_LABEL
+        uses: einaregilsson/beanstalk-deploy@v16
+        with:
+          aws_access_key: ${{ secrets.AWS_EBS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_EBS_SECRET_ACCESS_KEY }}
+          application_name: react-docker-ci-cd
+          environment_name: React-docker-ci-cd-env
+          use_existing_version_if_available: true
+          version_label: "Sample${{ steps.format-time.outputs.replaced }}"
+          region: us-east-1
+          deployment_package: deploy.zip
