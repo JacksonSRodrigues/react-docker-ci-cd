@@ -7,4 +7,5 @@ RUN npm run build     # This is an image build step. State of the container afte
 
 # FROM statements in docker file is considered as start of the block. 
 FROM nginx
+EXPOSE 80
 COPY --from=builder /app/build /usr/share/nginx/html
