@@ -80,6 +80,6 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_EBS_SECRET_ACCESS_KEY }}
           application_name: react-docker-ci-cd
           environment_name: React-docker-ci-cd-env
-          version_label: "react-docker-ci-cd${{ steps.format-time.outputs.replaced }}"
+          version_label: "Sample${{ steps.format-time.outputs.replaced }}"
           region: us-east-1
           deployment_package: deploy.zip
