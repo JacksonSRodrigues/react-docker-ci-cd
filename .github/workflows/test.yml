@@ -70,6 +70,13 @@ jobs:
           replace-with: '-'
           flags: 'g'
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EBS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_EBS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Generate Deployment Package
         run: zip -r deploy.zip Dockerrun.aws.json
 
@@ -83,3 +90,15 @@ jobs:
           version_label: "Sample"
           region: us-east-1
           deployment_package: deploy.zip
+
+      - name: Deploy to Elastic Beanstalk
+        run: |
+          EB_APP_NAME=react-docker-ci-cd
+          EB_ENV_NAME=React-docker-ci-cd-env
+          VERSION_LABEL=deploy-$(date +%Y%m%d%H%M%S)
+
+          # Create a new application version
+          aws elasticbeanstalk create-application-version --application-name $EB_APP_NAME --version-label $VERSION_LABEL --source-bundle S3Bucket=$EB_APP_NAME, S3Key=deploy.zip
+
+          # Update the environment to use the new application version
+          aws elasticbeanstalk update-environment --environment-name $EB_ENV_NAME --version-label $VERSION_LABEL
